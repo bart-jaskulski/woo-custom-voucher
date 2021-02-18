@@ -86,14 +86,4 @@
 			<property name="ignoreNewlines" value="false"/>
 		</properties>
 	</rule>
-
-	<!--
-	#############################################################################
-	USE THE PHPCompatibility RULESET
-	#############################################################################
-	-->
-
-	<config name="testVersion" value="7.0-99.0"/>
-	<rule ref="PHPCompatibility" />
-
 </ruleset>

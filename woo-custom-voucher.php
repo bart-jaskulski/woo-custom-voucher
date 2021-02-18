@@ -3,7 +3,7 @@
  * Plugin Name: Vouchers for WooCommerce
  * Plugin URI: http://woocommerce.com/products/woocommerce-extension/
  * Description: Custom voucher extensions for WooCommerce.
- * Version: 1.0.0-alpha
+ * Version: 1.0.0-alpha.2
  * Author: Dentonet
  * Author URI: https://dentonet.pl
  * Developer: Bart Jaskulski
@@ -16,6 +16,11 @@
  *
  * @package dentonet
  */
+
+namespace Dentonet\WP;
+
+use Dentonet\WP\{ Voucher_Option, WC_Payment_Complete, Voucher_Form };
+use Dentonet\WP\Component_Interface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -60,11 +65,12 @@ class Woo_Custom_Voucher {
 	 */
 	public function loader() {
 		require_once( __DIR__ . '/inc/component-interface.php' );
-		require_once( __DIR__ . '/inc/functions.php' );
 		require_once( __DIR__ . '/inc/class-voucher-option.php' );
 		require_once( __DIR__ . '/inc/class-wc-payment-complete.php' );
-		require_once( __DIR__ . '/inc/class-create-voucher-orders.php' );
 		require_once( __DIR__ . '/inc/class-voucher-form.php' );
+		require_once( __DIR__ . '/inc/class-voucher.php' );
+		require_once( __DIR__ . '/inc/class-voucher-manager.php' );
+		require_once( __DIR__ . '/inc/functions.php' );
 	}
 
 	/**
@@ -76,9 +82,27 @@ class Woo_Custom_Voucher {
 		return array(
 			new Voucher_Option(),
 			new WC_Payment_Complete(),
-			new Create_Voucher_Orders(),
 			new Voucher_Form(),
 		);
+	}
+
+	public static function install() {
+		global $wpdb;
+
+		$table_name = "{$wpdb->prefix}woo_vouchers";
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE {$table_name} (
+			voucher_key VARCHAR(19) NOT NULL,
+			order_id BIGINT UNSIGNED DEFAULT 0,
+			parent_order_id BIGINT UNSIGNED NOT NULL,
+			user_id BIGINT UNSIGNED DEFAULT 0,
+			voucher_type VARCHAR(255) NOT NULL,
+			PRIMARY KEY  (voucher_key)
+		) {$charset_collate} ENGINE=INNODB";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
 	}
 
 }
@@ -92,3 +116,5 @@ add_action(
 		( new Woo_Custom_Voucher() )->initialize();
 	}
 );
+
+register_activation_hook( __FILE__, array( 'Woo_Custom_Voucher', 'install' ) );

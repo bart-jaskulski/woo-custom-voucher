@@ -1,11 +1,52 @@
 <?php
 
+namespace Dentonet\WP;
+
+use Dentonet\WP\Component_Interface;
+
 defined( 'ABSPATH' ) || exit;
 
 class WC_Payment_Complete implements Component_Interface {
 
 	public function initialize() {
 		add_action( 'woocommerce_payment_complete', array( $this, 'action_on_payment_complete' ) );
+		add_action( 'woocommerce_voucher_payment_complete', array( $this, 'action_create_vouchers_form_order' ) );
+	}
+
+	public function action_create_vouchers_form_order( int $order_id ) {
+		// Get variables from order.
+		$order = wc_get_order( $order_id );
+		$voucher_type = '';
+		$count = 0;
+
+		$items = $order->get_items();
+
+		foreach ( $items as $item ) {
+
+			$item_sku = $item->get_product()->get_sku();
+
+			// Set correct voucher ticket SKU for new order.
+			switch ( $item_sku ) {
+				case 'bilet-grupowy-premium':
+					$voucher_type = 'bilet-premium';
+					break;
+				case 'bilet-grupowy-standard':
+					$voucher_type = 'bilet-standard';
+					break;
+			}
+			// Prepare the amount of tickets to generate.
+			$count = $item->get_quantity();
+		}
+
+		$voucher_factory = new Voucher_Manager();
+		$voucher_factory->set_voucher_type( $voucher_type );
+		$voucher_factory->set_parent_order_id( $order_id );
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$voucher_factory->add_voucher();
+		}
+
+		$voucher_factory->save();
 	}
 
 	/**

@@ -5,6 +5,10 @@
  * @package dentonet
  */
 
+namespace Dentonet\WP;
+
+use Dentonet\WP\Component_Interface;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -23,8 +27,8 @@ class Voucher_Option implements Component_Interface {
 	/**
 	 * Insert checkbox shown only for variable product.
 	 *
-	 * @param  array $options array of product type options
-	 * @return array modified product type options
+	 * @param  array $options Array of product type options.
+	 * @return array Modified product type options.
 	 */
 	public function filter_add_voucher_checkbox( array $options ) : array {
 		$options['voucher'] = array(
@@ -43,6 +47,6 @@ class Voucher_Option implements Component_Interface {
 	 * @param  int $post_id Current product ID.
 	 */
 	public function action_save_voucher_checkbox( int $post_id ) {
-		update_post_meta( $post_id, '_voucher', isset( $_POST['_voucher'] ) ? 'yes' : 'no' );
+		update_post_meta( $post_id, '_voucher', isset( $_POST['_voucher'] ) ? 'yes' : 'no' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 }
