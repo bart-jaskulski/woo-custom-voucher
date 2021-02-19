@@ -32,7 +32,7 @@ class Voucher_Manager {
 	 */
 	public function add_voucher() {
 		$voucher = new Voucher(
-			Voucher::generate(),
+			Voucher::generate_voucher_code(),
 			0,
 			isset( $this->parent_order_id ) ? $this->parent_order_id : 0,
 			0,
@@ -130,7 +130,7 @@ class Voucher_Manager {
 
 		$query .= implode( ', ', $place_holders );
 
-		if ( $wpdb->query( $wpdb->prepare( $query, $values ) ) ) {
+		if ( $wpdb->query( $wpdb->prepare( $query, $values ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			return true;
 		} else {
 			return false;

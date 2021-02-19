@@ -3,7 +3,7 @@
  * Plugin Name: Vouchers for WooCommerce
  * Plugin URI: http://woocommerce.com/products/woocommerce-extension/
  * Description: Custom voucher extensions for WooCommerce.
- * Version: 1.0.0-alpha.2
+ * Version: 1.0.0-beta
  * Author: Dentonet
  * Author URI: https://dentonet.pl
  * Developer: Bart Jaskulski
@@ -70,7 +70,6 @@ class Woo_Custom_Voucher {
 		require_once( __DIR__ . '/inc/class-voucher-form.php' );
 		require_once( __DIR__ . '/inc/class-voucher.php' );
 		require_once( __DIR__ . '/inc/class-voucher-manager.php' );
-		require_once( __DIR__ . '/inc/functions.php' );
 	}
 
 	/**
@@ -86,7 +85,10 @@ class Woo_Custom_Voucher {
 		);
 	}
 
-	public static function install() {
+	/**
+	 * Install custom table for holding vouchers with associated data.
+	 */
+	public static function install_db_table() {
 		global $wpdb;
 
 		$table_name = "{$wpdb->prefix}woo_vouchers";
@@ -117,4 +119,4 @@ add_action(
 	}
 );
 
-register_activation_hook( __FILE__, array( 'Woo_Custom_Voucher', 'install' ) );
+register_activation_hook( __FILE__, array( 'Dentonet\WP\Woo_Custom_Voucher', 'install_db_table' ) );

@@ -13,14 +13,14 @@ class Voucher_Form implements Component_Interface {
 	 * Add all hooks and filters to WordPress.
 	 */
 	public function initialize() {
-		add_filter( 'template_include', array( $this, 'wpdocs_include_template_files_on_page' ) );
+		add_filter( 'template_include', array( $this, 'filter_add_voucher_template' ) );
 		add_action( 'wp_ajax_woo_voucher', array( $this, 'action_ajax_validate_voucher' ) );
 		add_action( 'wp_ajax_nopriv_woo_voucher', array( $this, 'action_ajax_validate_voucher' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'action_ajax_add_global_variables' ) );
 	}
 
 	/**
-	 * Ajax call handler. Read and validate voucher, then take action.
+	 * Ajax call handler. Read and validate voucher, then maybe create new user and order.
 	 */
 	public function action_ajax_validate_voucher() {
 		if (
@@ -37,34 +37,46 @@ class Voucher_Form implements Component_Interface {
 		if ( ! $voucher ) {
 			wp_send_json_error( 'no voucher in database' );
 		}
+		if ( $voucher->is_used() ) {
+			wp_send_json_error( 'voucher was used' );
+		}
 
 		$email = ! empty( $_POST['user']['email'] ) ? sanitize_email( wp_unslash( $_POST['user']['email'] ) ) : '';
 		$username = ! empty( $_POST['user']['name'] && $_POST['user']['surname'] ) ? sanitize_user( wp_unslash( $_POST['user']['name'] . ' ' . $_POST['user']['surname'] ) ) : '';
 		$password = ! empty( $_POST['user']['password'] ) ? $_POST['user']['password'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 
-		// If voucher was found, process further.
 		$customer_id = wc_create_new_customer( $email, $username, $password );
 		if ( is_wp_error( $customer_id ) ) {
 			wp_send_json_error( $customer_id->get_error_message() );
 		}
 
-		$order = wc_create_order();
-		$order->set_customer_id( $customer_id );
-		$order->set_created_via( 'voucher' );
-		$order->update_status( 'completed' );
+		// Setup new order.
+		$new_order_data = array(
+			'status'        => 'completed',
+			'customer_id'   => $customer_id,
+			'parent'        => $voucher->get_parent_order_id(),
+			'created_via'   => 'voucher',
+		);
+
+		$order = wc_create_order( $new_order_data );
 		$order->add_meta_data( 'voucher_key', $voucher->get_voucher_code(), true );
 
 		$product = wc_get_product( wc_get_product_id_by_sku( $voucher->get_voucher_type() ) );
 		$order->add_product( $product, 1 );
+
 		// Create 100% discount.
-		// $discount = new WC_Order_Item_Coupon();
-		// $discount->set_name( 'Voucher' );
-		// $discount->set_code( 'Voucher' );
-		// $discount->set_discount( '100' );
-		// $discount->set_taxes( false );
-		// $discount->save();
+		$subtotal = $order->get_subtotal();
+		$discount = new \WC_Order_Item_Fee();
+		$discount->set_name( 'Voucher' );
+		$discount->set_amount( -$subtotal );
+		$discount->set_total( -$subtotal );
+		$discount->save();
+		$order->add_item( $discount );
 		$order->calculate_totals();
 		$order->save();
+
+		// Finally pair user and order with voucher.
+		$voucher->add_user_to_voucher( $customer_id, $order->get_id() );
 
 		wp_send_json_success( array( 'return_url' => home_url() ) );
 	}
@@ -84,7 +96,7 @@ class Voucher_Form implements Component_Interface {
 		}
 	}
 
-	public function wpdocs_include_template_files_on_page( $template ) {
+	public function filter_add_voucher_template( $template ) {
 		if ( is_page( 'voucher' ) ) {
 			return $this->get_voucher_form();
 		}
