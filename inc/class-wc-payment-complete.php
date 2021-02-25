@@ -8,11 +8,20 @@ defined( 'ABSPATH' ) || exit;
 
 class WC_Payment_Complete implements Component_Interface {
 
+	/**
+	 * Add all hooks and filters to WordPress.
+	 */
 	public function initialize() {
+		// TODO: Add other hooks as with maybe reduce stock levels.
 		add_action( 'woocommerce_payment_complete', array( $this, 'action_on_payment_complete' ) );
 		add_action( 'woocommerce_voucher_payment_complete', array( $this, 'action_create_vouchers_form_order' ) );
 	}
 
+	/**
+	 * When order lands as completed, create vouchers and save them to database.
+	 *
+	 * @param  int $order_id ID of currently processed order.
+	 */
 	public function action_create_vouchers_form_order( int $order_id ) {
 		// Get variables from order.
 		$order = wc_get_order( $order_id );
