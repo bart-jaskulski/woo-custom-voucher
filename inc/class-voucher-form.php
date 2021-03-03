@@ -30,15 +30,15 @@ class Voucher_Form implements Component_Interface {
 			wp_nonce_ays( 'wrong-nonce' );
 		}
 
-		$voucher_key = isset( $_POST['voucher-key'] ) ? $_POST['voucher-key'] : '';
+		$voucher_key = isset( $_POST['voucher-key'] ) ? strtoupper( wp_unslash( $_POST['voucher-key'] ) ) : '';
 
-		$voucher = Voucher::get_voucher( strtoupper( $voucher_key ) );
+		$voucher = Voucher::get_voucher( $voucher_key );
 
 		if ( ! $voucher ) {
-			wp_send_json_error( 'no voucher in database' );
+			wp_send_json_error( array( 'no voucher in database' ) );
 		}
 		if ( $voucher->is_used() ) {
-			wp_send_json_error( 'voucher was used' );
+			wp_send_json_error( array( 'voucher was used' ) );
 		}
 
 		$email = ! empty( $_POST['user']['email'] ) ? sanitize_email( wp_unslash( $_POST['user']['email'] ) ) : '';

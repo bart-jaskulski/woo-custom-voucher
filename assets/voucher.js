@@ -28,8 +28,13 @@ function processData( response ) {
 	if ( response.success ) {
 		document.location = response.data.return_url;
 	} else {
+		const errorHolder = document.getElementById( 'js-error-holder' );
+		console.log( response.data )
 		response.data.forEach( error => {
-			FORM.innerHTML += `<h2>${error}</h2>`
+			let errorMessage = document.createElement("p")
+			let message = document.createTextNode( error )
+			errorMessage.appendChild( message )
+			errorHolder.appendChild( errorMessage )
 		})
 	}
 }
