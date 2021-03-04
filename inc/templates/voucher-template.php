@@ -52,15 +52,18 @@ get_header();
 			</p>
 		</fieldset>
 		<fieldset class="voucher-marketing-wrapper is-border">
-			<input type="checkbox" required>
-			<input type="checkbox" required>
+			<p class="form-group">
+					<input id="marketing_content" class="input-checkbox" type="checkbox" required>
+					<label for="marketing_content" class="checkbox">Zgoda marketingowa</label>
+				</p>
+			<p class="form-group">
+					<input class="input-checkbox" id="rules_consent" type="checkbox" required>
+					<label class="checkbox" for="rules_consent">Akceptuję regulamin</label>
+				</p>
 		</fieldset>
 		<input type="hidden" name="action" value="woo_voucher">
 		<?php wp_nonce_field( 'claim-voucher', '_voucher_nonce' ); ?>
-		<input
-		  type="submit"
-			class="is-full-width voucher-submit"
-		  value="<?php esc_attr_e( 'Zarejestruj', 'woo-custom-voucher' ); ?>">
+		<button type="submit" class="is-full-width voucher-submit"><?php esc_attr_e( 'Zarejestruj', 'woo-custom-voucher' ); ?><i class="icon-chevron-right"></i></button>
 	</form>
 </main>
 <?php
