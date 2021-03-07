@@ -35,20 +35,30 @@ class Voucher_Form implements Component_Interface {
 		$voucher = Voucher::get_voucher( $voucher_key );
 
 		if ( ! $voucher ) {
-			wp_send_json_error( array( 'no voucher in database' ) );
+			wp_send_json_error( array( __( 'Nie znaleziono vouchere w bazie', 'woo-custom-voucher' ) ) );
 		}
 		if ( $voucher->is_used() ) {
-			wp_send_json_error( array( 'voucher was used' ) );
+			wp_send_json_error( array( __( 'Ten voucher został już wykorzystany.', 'woo-custom-voucher' ) ) );
 		}
 
 		$email = ! empty( $_POST['user']['email'] ) ? sanitize_email( wp_unslash( $_POST['user']['email'] ) ) : '';
-		$username = ! empty( $_POST['user']['name'] && $_POST['user']['surname'] ) ? sanitize_user( wp_unslash( $_POST['user']['name'] . ' ' . $_POST['user']['surname'] ) ) : '';
 		$password = ! empty( $_POST['user']['password'] ) ? $_POST['user']['password'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 
-		$customer_id = wc_create_new_customer( $email, $username, $password );
+		$customer_id = wc_create_new_customer(
+			$email,
+			'',
+			$password,
+			array(
+				'first_name' => ! empty( $data['user']['name'] ) ? $data['user']['name'] : '',
+				'last_name'  => ! empty( $data['user']['surname'] ) ? $data['user']['surname'] : '',
+			)
+		);
+
 		if ( is_wp_error( $customer_id ) ) {
 			wp_send_json_error( $customer_id->get_error_message() );
 		}
+
+		wc_set_customer_auth_cookie( $customer_id );
 
 		// Setup new order.
 		$new_order_data = array(
@@ -78,7 +88,7 @@ class Voucher_Form implements Component_Interface {
 		// Finally pair user and order with voucher.
 		$voucher->add_user_to_voucher( $customer_id, $order->get_id() );
 
-		wp_send_json_success( array( 'return_url' => home_url() ) );
+		wp_send_json_success( array( 'return_url' => $order->get_checkout_order_received_url() ) );
 	}
 
 	/**

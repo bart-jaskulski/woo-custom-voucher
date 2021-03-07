@@ -6,7 +6,7 @@ FORM.addEventListener( 'submit', e => {
 	const data = {
 		method: 'POST',
 		// Create body as url string from current form data.
-		body: new URLSearchParams( [ ...( new FormData( e.currentTarget ) ) ] ),
+		body: new URLSearchParams( [ ...( new FormData( e.target ) ) ] ),
 		credentials: 'same-origin',
 		headers: {
 			// Match header with body param.
@@ -29,6 +29,7 @@ function processData( response ) {
 		document.location = response.data.return_url;
 	} else {
 		const errorHolder = document.getElementById( 'js-error-holder' );
+		errorHolder.classList.add( 'has-error' );
 		console.log( response.data )
 		response.data.forEach( error => {
 			let errorMessage = document.createElement("p")
