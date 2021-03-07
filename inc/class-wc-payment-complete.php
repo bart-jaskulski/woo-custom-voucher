@@ -12,9 +12,22 @@ class WC_Payment_Complete implements Component_Interface {
 	 * Add all hooks and filters to WordPress.
 	 */
 	public function initialize() {
-		// TODO: Add other hooks as with maybe reduce stock levels.
-		add_action( 'woocommerce_payment_complete', array( $this, 'action_on_payment_complete' ) );
+		add_action( 'woocommerce_order_status_completed', array( $this, 'action_on_payment_complete' ) );
+		add_action( 'woocommerce_order_status_processing', array( $this, 'action_on_payment_complete' ) );
 		add_action( 'woocommerce_voucher_payment_complete', array( $this, 'action_create_vouchers_form_order' ) );
+		add_action( 'woocommerce_email_customer_details', array( $this, 'action_send_voucher_codes' ), 10, 3 );
+	}
+
+	public function action_send_voucher_codes( $order, $sent_to_admin = false, $plain_text = false ) {
+		try {
+			$vouchers = Voucher::get_vouchers_from_parent_order( $order->get_id() );
+			wc_get_template(
+				'emails/email-voucher-codes.php',
+				array( 'vouchers' => $vouchers )
+			);
+		} catch ( \Exception $e ) {
+			return;
+		}
 	}
 
 	/**

@@ -101,7 +101,7 @@ class Voucher {
 
 	/**
 	 * Check if current voucher has been used already.
-	 * @method is_used
+	 *
 	 * @return bool True if used, false if not.
 	 */
 	public function is_used() : bool {
@@ -138,6 +138,36 @@ class Voucher {
 		);
 	}
 
+	/**
+	 * Get all voucher associated with purchase order.
+	 *
+	 * @param  int $order_id Order of purchase id.
+	 * @return array Return $column => $value array
+	 * @throws \Exception If no fields found in database.
+	 */
+	public static function get_vouchers_from_parent_order( int $order_id ) : array {
+		global $wpdb;
+
+		$vouchers = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM `{$wpdb->prefix}woo_vouchers` WHERE `parent_order_id` = %d",
+				absint( $order_id )
+			),
+			'ARRAY_A'
+		);
+
+		if ( is_null( $vouchers ) ) {
+			throw new \Exception( 'No vouchers associated with passed order ID.' );
+		}
+
+		return $vouchers;
+	}
+
+	/**
+	 * Generate random voucher code in xxxx-xxxx-xxxx-xxxx format.
+	 *
+	 * @return string Desired voucher code.
+	 */
 	public static function generate_voucher_code() : string {
 		$charset = array_merge( range( 0, 9 ), range( 'A', 'Z' ) );
 		$pool_size = count( $charset ) - 1;

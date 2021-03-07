@@ -25,27 +25,27 @@ get_header();
 		<fieldset class="voucher-user-data-wrapper">
 			<legend class="h3 color-primary"><?php esc_html_e( 'Twoje dane', 'woo-custom-voucher' ); ?></legend>
 			<p class="form-group">
-				<input id="user-name" type="text" name="user[name]" required>
+				<input id="user-name" type="text" name="user[name]" required autocomplete="given-name">
 				<label
 				  for="user-name"><?php esc_html_e( 'Imię', 'woo-custom-voucher' ); ?></label>
 			</p>
 			<p class="form-group">
-				<input id="user-surname" type="text" name="user[surname]" required>
+				<input id="user-surname" type="text" name="user[surname]" required autocomplete="family-name">
 				<label
 				  for="user-surname"><?php esc_html_e( 'Nazwisko', 'woo-customer-voucher' ); ?></label>
 			</p>
 			<p class="form-group">
-				<input id="user-email" type="email" name="user[email]" required>
+				<input id="user-email" type="email" name="user[email]" required autocomplete="email">
 				<label
 				  for="user-email"><?php esc_html_e( 'Email', 'woo-customer-voucher' ); ?></label>
 			</p>
 			<p class="form-group">
-				<input id="user-phone" type="text" name="user[phone]" required>
+				<input id="user-phone" type="tel" name="user[phone]" required autocomplete="tel">
 				<label
 				  for="user-phone"><?php esc_html_e( 'Telefon', 'woo-customer-voucher' ); ?></label>
 			</p>
 			<p class="form-group">
-				<input id="user-pass" type="password" name="user[password]"
+				<input id="user-pass" type="password" name="user[password]" autocomplete="new-password"
 				  required>
 				<label
 				  for="user-pass"><?php esc_html_e( 'Hasło', 'woo-customer-voucher' ); ?></label>
@@ -53,17 +53,20 @@ get_header();
 		</fieldset>
 		<fieldset class="voucher-marketing-wrapper is-border">
 			<p class="form-group">
-					<input id="marketing_content" class="input-checkbox" type="checkbox" required>
-					<label for="marketing_content" class="checkbox">Zgoda marketingowa</label>
-				</p>
+				<input id="marketing_consent" type="checkbox" class="input-checkbox" required>
+				<label for="marketing_consent" class="checkbox">Zgoda marketingowa</label>
+			</p>
 			<p class="form-group">
-					<input class="input-checkbox" id="rules_consent" type="checkbox" required>
-					<label class="checkbox" for="rules_consent">Akceptuję regulamin</label>
-				</p>
+				<input id="rules_consent" type="checkbox" class="input-checkbox" required>
+				<label for="rules_consent" class="checkbox">Regulamin</label>
+			</p>
 		</fieldset>
 		<input type="hidden" name="action" value="woo_voucher">
 		<?php wp_nonce_field( 'claim-voucher', '_voucher_nonce' ); ?>
-		<button type="submit" class="is-full-width voucher-submit"><?php esc_attr_e( 'Zarejestruj', 'woo-custom-voucher' ); ?><i class="icon-chevron-right"></i></button>
+		<input
+		  type="submit"
+			class="has-background is-full-width voucher-submit"
+		  value="<?php esc_attr_e( 'Zarejestruj', 'woo-custom-voucher' ); ?>">
 	</form>
 </main>
 <?php
