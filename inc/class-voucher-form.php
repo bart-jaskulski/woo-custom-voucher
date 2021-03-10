@@ -118,6 +118,6 @@ class Voucher_Form implements Component_Interface {
 	 * Retrieve html template.
 	 */
 	public function get_voucher_form() {
-		include __DIR__ . '/templates/voucher-template.php';
+		wc_get_template( 'voucher/form.php' );
 	}
 }
