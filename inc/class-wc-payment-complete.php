@@ -91,7 +91,7 @@ class WC_Payment_Complete implements Component_Interface {
 	 * @param  int $order_id ID of current order.
 	 * @return bool true if product has set _voucher meta.
 	 */
-	private function is_voucher_active( int $order_id ) : bool {
+	public static function is_voucher_active( int $order_id ) : bool {
 		$order = wc_get_order( $order_id );
 		$order_items = $order->get_items();
 
