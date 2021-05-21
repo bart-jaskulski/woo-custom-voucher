@@ -2,13 +2,22 @@
   "name": "bart-jaskulski/woo-custom-voucher",
   "description": "Plugin for WooCommerce",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "version": "1.0.0",
+  "type": "wordpress-plugin",
+  "license": "GPL-3.0-or-later",
+  "keywords": [ "wordpress", "plugin" ],
   "authors": [
     {
-      "name": "bartj",
+      "name": "Bartek Jaskulski",
       "email": "bjaskulski@protonmail.com"
     }
   ],
+  "config": {
+    "platform": {
+      "php": "8.0"
+    }
+  },
   "require": {
+    "php": "8.0"
   }
 }
