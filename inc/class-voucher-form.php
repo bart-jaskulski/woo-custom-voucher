@@ -35,7 +35,7 @@ class Voucher_Form implements Component_Interface {
 		$voucher = Voucher::get_voucher( $voucher_key );
 
 		if ( ! $voucher ) {
-			wp_send_json_error( array( __( 'Nie znaleziono vouchere w bazie', 'woo-custom-voucher' ) ) );
+			wp_send_json_error( array( __( 'Nie znaleziono vouchera w bazie', 'woo-custom-voucher' ) ) );
 		}
 		if ( $voucher->is_used() ) {
 			wp_send_json_error( array( __( 'Ten voucher został już wykorzystany.', 'woo-custom-voucher' ) ) );

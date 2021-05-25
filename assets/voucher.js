@@ -30,12 +30,18 @@ function processData( response ) {
 	} else {
 		const errorHolder = document.getElementById( 'js-error-holder' );
 		errorHolder.classList.add( 'has-error' );
-		console.log( response.data )
-		response.data.forEach( error => {
+
+		if ( typeof response.data === 'string' ) {
 			let errorMessage = document.createElement("p")
-			let message = document.createTextNode( error )
-			errorMessage.appendChild( message )
+			errorMessage.innerHTML = response.data
 			errorHolder.appendChild( errorMessage )
-		})
+		} else {
+			response.data.forEach(error => {
+				let errorMessage = document.createElement("p")
+				let message = document.createTextNode(error)
+				errorMessage.appendChild(message)
+				errorHolder.appendChild(errorMessage)
+			})
+		}
 	}
 }

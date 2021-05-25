@@ -2,7 +2,7 @@
   "name": "bart-jaskulski/woo-custom-voucher",
   "description": "Plugin for WooCommerce",
   "minimum-stability": "stable",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "wordpress-plugin",
   "license": "GPL-3.0-or-later",
   "keywords": [ "wordpress", "plugin" ],
