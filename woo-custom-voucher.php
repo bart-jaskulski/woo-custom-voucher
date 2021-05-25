@@ -3,7 +3,7 @@
  * Plugin Name: Vouchers for WooCommerce
  * Plugin URI: http://woocommerce.com/products/woocommerce-extension/
  * Description: Custom voucher extensions for WooCommerce.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Dentonet
  * Author URI: https://dentonet.pl
  * Developer: Bart Jaskulski
