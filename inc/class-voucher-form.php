@@ -72,6 +72,11 @@ class Voucher_Form implements Component_Interface {
 		$order->add_meta_data( 'voucher_key', $voucher->get_voucher_code(), true );
 
 		$product = wc_get_product( wc_get_product_id_by_sku( $voucher->get_voucher_type() ) );
+		$user = $order->get_user();
+		if ($user) {
+			$role = get_post_meta( $product->get_id(), '_related_role', true );
+			$user->set_role( $role );
+		}
 		$order->add_product( $product, 1 );
 
 		// Create 100% discount.

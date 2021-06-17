@@ -52,10 +52,7 @@ get_header();
 			</p>
 		</fieldset>
 		<fieldset class="voucher-marketing-wrapper is-border">
-			<p class="form-group">
-				<input id="marketing_consent" type="checkbox" class="input-checkbox" required>
-				<label for="marketing_consent" class="checkbox">Zgoda marketingowa</label>
-			</p>
+            <?php do_action( 'woocommerce_checkout_terms_and_conditions' ); ?>
 			<p class="form-group">
 				<input id="rules_consent" type="checkbox" class="input-checkbox" required>
 				<label for="rules_consent" class="checkbox">Regulamin</label>
